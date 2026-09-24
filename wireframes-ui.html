@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wireframes — Dashboard de Transferencias</title>
+  <style>
+    :root{
+      --line:#2b2b2b;
+      --paper:#fbfaf7;
+      --muted:#8a8a8a;
+      --accent:#3a3a3a;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family:'Courier New', monospace;
+      background:#e8e6e0;
+      color:var(--line);
+    }
+    header{
+      padding:24px 32px 12px;
+      border-bottom:2px solid var(--line);
+      background:var(--paper);
+    }
+    header h1{
+      margin:0 0 4px;
+      font-size:20px;
+      letter-spacing:0.5px;
+    }
+    header p{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+    }
+    nav{
+      display:flex;
+      gap:8px;
+      padding:16px 32px;
+      flex-wrap:wrap;
+      background:var(--paper);
+      border-bottom:2px solid var(--line);
+    }
+    nav button{
+      font-family:inherit;
+      font-size:13px;
+      padding:8px 14px;
+      background:#fff;
+      border:2px solid var(--line);
+      cursor:pointer;
+    }
+    nav button.active{
+      background:var(--line);
+      color:#fff;
+    }
+    main{
+      padding:32px;
+      display:flex;
+      justify-content:center;
+    }
+    .screen{
+      display:none;
+      width:100%;
+      max-width:900px;
+    }
+    .screen.active{ display:block; }
+    .frame{
+      background:var(--paper);
+      border:2px solid var(--line);
+      padding:0;
+      position:relative;
+    }
+    .frame-bar{
+      border-bottom:2px dashed var(--line);
+      padding:8px 14px;
+      font-size:11px;
+      color:var(--muted);
+      display:flex;
+      justify-content:space-between;
+    }
+    .frame-body{ padding:24px; }
+    .box{
+      border:2px dashed var(--line);
+      padding:14px;
+      margin-bottom:14px;
+    }
+    .box-title{
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      color:var(--muted);
+      margin-bottom:8px;
+    }
+    .row{ display:flex; gap:14px; flex-wrap:wrap; }
+    .col{ flex:1; min-width:180px; }
+    .placeholder-text{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.7;
+    }
+    .placeholder-text .l{ display:block; background:repeating-linear-gradient(90deg, transparent, transparent 2px); }
+    .fake-line{
+      height:8px;
+      background:repeating-linear-gradient(90deg, #c9c6bd 0 6px, transparent 6px 9px);
+      margin-bottom:6px;
+      width:100%;
+    }
+    .fake-line.short{ width:60%; }
+    .fake-input{
+      border:2px solid var(--line);
+      height:30px;
+      margin-bottom:10px;
+    }
+    .fake-button{
+      border:2px solid var(--line);
+      background:var(--line);
+      color:#fff;
+      text-align:center;
+      padding:8px;
+      font-size:12px;
+      cursor:default;
+    }
+    .table-mock{ width:100%; border-collapse:collapse; }
+    .table-mock th, .table-mock td{
+      border:1px solid var(--line);
+      padding:8px;
+      font-size:11px;
+      text-align:left;
+    }
+    .table-mock th{ background:#efece5; }
+    .chip{
+      display:inline-block;
+      width:12px; height:12px;
+      border:1.5px solid var(--line);
+      border-radius:50%;
+      margin-right:5px;
+    }
+    .chip.g{ background:#7fbf7f; }
+    .chip.y{ background:#e0c14f; }
+    .chip.r{ background:#e07f7f; }
+    .chart-mock{
+      height:110px;
+      border:2px dashed var(--line);
+      display:flex;
+      align-items:flex-end;
+      gap:6px;
+      padding:8px;
+    }
+    .chart-mock span{
+      flex:1;
+      background:#c9c6bd;
+    }
+    .pie-mock{
+      width:100px; height:100px;
+      border-radius:50%;
+      border:2px dashed var(--line);
+      background: conic-gradient(#7fbf7f 0 88%, #e07f7f 88% 100%);
+      margin:0 auto;
+    }
+    .annot{
+      position:absolute;
+      font-size:11px;
+      color:#a33;
+      border:1px dashed #a33;
+      padding:3px 6px;
+      background:#fff;
+    }
+    .arrow-note{
+      font-size:11px;
+      color:#a33;
+      margin-top:6px;
+      font-style:italic;
+    }
+    .breadcrumb{
+      font-size:11px;
+      color:var(--muted);
+      margin-bottom:12px;
+    }
+    .legend{
+      font-size:11px;
+      color:var(--muted);
+      margin-top:10px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>WIREFRAMES — Dashboard de Transferencias</h1>
+  <p>Diseño de interfaz (boceto, no funcional) — Primera Entrega, TP Final UAI</p>
+</header>
+
+<nav>
+  <button class="active" data-screen="s1">1. Login</button>
+  <button data-screen="s2">2. Nivel 1 — Bancos</button>
+  <button data-screen="s3">3. Nivel 2 — Transferencias</button>
+  <button data-screen="s4">4. Nivel 3 — Detalle</button>
+</nav>
+
+<main>
+
+  <!-- PANTALLA 1: LOGIN -->
+  <section class="screen active" id="s1">
+    <div class="frame" style="max-width:420px; margin:0 auto;">
+      <div class="frame-bar"><span>pantalla_login.html</span><span>/login</span></div>
+      <div class="frame-body">
+        <div class="fake-line short" style="height:16px; width:80%;"></div>
+        <p class="placeholder-text">Dashboard de Transferencias — Iniciar sesión</p>
+        <div class="box">
+          <div class="box-title">Usuario</div>
+          <div class="fake-input"></div>
+          <div class="box-title">Contraseña</div>
+          <div class="fake-input"></div>
+          <div class="fake-button">INGRESAR</div>
+        </div>
+        <p class="arrow-note">→ credenciales incorrectas: mensaje de error arriba del formulario, sin acceso al tablero</p>
+        <p class="arrow-note">→ credenciales correctas: redirige automáticamente a Nivel 1 (Bancos)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PANTALLA 2: NIVEL 1 -->
+  <section class="screen" id="s2">
+    <div class="frame">
+      <div class="frame-bar"><span>tablero_nivel1.html</span><span>/tablero</span></div>
+      <div class="frame-body">
+        <div class="breadcrumb">Bancos <span style="color:#a33;">(sin nivel superior)</span></div>
+        <div class="box">
+          <div class="box-title">Filtros</div>
+          <div class="row">
+            <div class="fake-input" style="flex:1;"></div>
+            <div class="fake-input" style="flex:1;"></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <div class="box">
+              <div class="box-title">% Aprobación general</div>
+              <div class="pie-mock"></div>
+              <p class="legend" style="text-align:center;">🟢 Aprobadas &nbsp; 🔴 Rechazadas</p>
+            </div>
+          </div>
+          <div class="col" style="flex:2;">
+            <div class="box">
+              <div class="box-title">Bancos — click para ver detalle (drill-down →)</div>
+              <table class="table-mock">
+                <tr><th>Banco</th><th>Volumen</th><th>Monto total</th><th>Semáforo</th></tr>
+                <tr><td>Banco Galicia</td><td>128</td><td>$1.240.000</td><td><span class="chip g"></span>Verde</td></tr>
+                <tr><td>Banco Santander</td><td>96</td><td>$890.000</td><td><span class="chip y"></span>Amarillo</td></tr>
+                <tr><td>Brubank</td><td>210</td><td>$1.980.000</td><td><span class="chip r"></span>Rojo</td></tr>
+                <tr><td>Banco Nación</td><td>54</td><td>$430.000</td><td><span class="chip g"></span>Verde</td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        <p class="arrow-note">→ click en una fila de banco: navega a Nivel 2 (Transferencias de ese banco)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PANTALLA 3: NIVEL 2 -->
+  <section class="screen" id="s3">
+    <div class="frame">
+      <div class="frame-bar"><span>tablero_nivel2.html</span><span>/tablero/banco/{id}</span></div>
+      <div class="frame-body">
+        <div class="breadcrumb">Bancos <span style="color:#a33;">← volver (drill-up)</span> / Banco Galicia</div>
+        <div class="box">
+          <div class="box-title">Evolución de transferencias (Banco Galicia)</div>
+          <div class="chart-mock">
+            <span style="height:40%"></span><span style="height:65%"></span><span style="height:50%"></span>
+            <span style="height:80%"></span><span style="height:55%"></span><span style="height:70%"></span>
+            <span style="height:45%"></span>
+          </div>
+        </div>
+        <div class="box">
+          <div class="box-title">Transferencias — click para ver detalle (drill-down →)</div>
+          <div class="row" style="margin-bottom:10px;">
+            <div class="fake-input" style="flex:1;"></div>
+            <div class="fake-input" style="flex:1;"></div>
+          </div>
+          <table class="table-mock">
+            <tr><th>Fecha</th><th>Producto</th><th>País</th><th>Monto</th><th>Estado</th></tr>
+            <tr><td>22/09</td><td>Fondeo cuenta</td><td>Argentina</td><td>$15.000</td><td><span class="chip g"></span>Aprobada</td></tr>
+            <tr><td>22/09</td><td>Fondeo cuenta</td><td>Brasil</td><td>$22.000</td><td><span class="chip r"></span>Rechazada</td></tr>
+            <tr><td>21/09</td><td>Transf. interbanc.</td><td>Argentina</td><td>$8.000</td><td><span class="chip g"></span>Aprobada</td></tr>
+          </table>
+        </div>
+        <p class="arrow-note">→ click en "Bancos" del breadcrumb: vuelve a Nivel 1 (drill-up)</p>
+        <p class="arrow-note">→ click en una fila de transferencia: navega a Nivel 3 (Detalle)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PANTALLA 4: NIVEL 3 -->
+  <section class="screen" id="s4">
+    <div class="frame" style="max-width:560px; margin:0 auto;">
+      <div class="frame-bar"><span>tablero_nivel3.html</span><span>/tablero/transferencia/{id}</span></div>
+      <div class="frame-body">
+        <div class="breadcrumb">Bancos / Banco Galicia <span style="color:#a33;">← volver (drill-up)</span> / Transferencia #000003</div>
+        <div class="box">
+          <div class="box-title">Datos de la transferencia</div>
+          <div class="fake-line"></div>
+          <div class="fake-line"></div>
+          <div class="fake-line short"></div>
+        </div>
+        <div class="box">
+          <div class="box-title">Estado <span class="chip r"></span> Rechazada</div>
+          <p class="placeholder-text">Código de respuesta: 51<br>Monto, banco, producto, país, fecha</p>
+        </div>
+        <div class="box">
+          <div class="box-title">Línea de tiempo</div>
+          <p class="placeholder-text">Recibida → Enviada → Respondida → (Rechazada)</p>
+        </div>
+        <p class="arrow-note">→ click en "Banco Galicia" del breadcrumb: vuelve a Nivel 2 (drill-up)</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  document.querySelectorAll('nav button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.screen).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

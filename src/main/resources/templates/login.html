@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar sesión — Dashboard de Transferencias</title>
+    <link rel="stylesheet" href="/css/estilos.css">
+</head>
+<body class="login-body">
+    <div class="login-box">
+        <h1>Dashboard de Transferencias</h1>
+        <p class="subtitulo">Iniciar sesión</p>
+
+        <p th:if="${param.error}" class="mensaje-error">
+            Usuario o contraseña incorrectos.
+        </p>
+        <p th:if="${param.logout}" class="mensaje-ok">
+            Sesión cerrada correctamente.
+        </p>
+
+        <form th:action="@{/login}" method="post">
+            <label for="username">Usuario</label>
+            <input type="text" id="username" name="username" required autofocus>
+
+            <label for="password">Contraseña</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Ingresar</button>
+        </form>
+    </div>
+</body>
+</html>

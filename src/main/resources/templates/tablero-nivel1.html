@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Tablero — Bancos</title>
+    <link rel="stylesheet" href="/css/estilos.css">
+</head>
+<body>
+    <div style="padding: 30px;">
+        <h1>Login ok</h1>
+        <p>Sesión iniciada como: <strong sec:authentication="name">usuario</strong></p>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit">Cerrar sesión</button>
+        </form>
+    </div>
+</body>
+</html>
