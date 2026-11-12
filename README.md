@@ -1,7 +1,7 @@
 # Dashboard de Transferencias
 
 Proyecto final de Tableros y Dashboards (UAI). Tablero de control sobre transferencias de
-fondeo de cuenta (AFT) entre bancos, con drill-down de 3 niveles, semáforo y login.
+fondeo de cuenta entre bancos, con drill-down de 3 niveles, semáforo y login.
 
 ## Qué incluye
 
