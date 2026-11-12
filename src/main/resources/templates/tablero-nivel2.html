@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tablero — Transferencias del banco</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script th:src="@{/js/tema-graficos.js}"></script>
+</head>
+<body>
+<div th:replace="~{fragments :: cabecera}"></div>
+
+<main class="contenido">
+    <nav class="breadcrumb">
+        <a th:href="@{/tablero(desde=${desde},hasta=${hasta})}">&larr; Bancos</a> (drill-up)
+        / <strong th:text="${banco.nombre()}">Banco</strong> <span class="nota">(nivel 2 de 3)</span>
+    </nav>
+
+    <section class="kpis">
+        <div class="kpi"><span class="kpi-valor" th:text="${banco.total()}">0</span><span class="kpi-label">Transferencias</span></div>
+        <div class="kpi"><span class="kpi-valor" th:text="${banco.tasaAprobacion() != null ? #numbers.formatDecimal(banco.tasaAprobacion(),1,1,'COMMA') + '%' : '—'}">0%</span><span class="kpi-label">Tasa de aprobación</span></div>
+        <div class="kpi"><span class="kpi-valor" th:text="'$ ' + ${#numbers.formatDecimal(banco.montoAprobado(),1,'POINT',0,'COMMA')}">$ 0</span><span class="kpi-label">Monto aprobado</span></div>
+        <div class="kpi">
+            <span class="kpi-valor" th:classappend="${'txt-' + #strings.toLowerCase(banco.semaforo())}"
+                  th:text="${#strings.toUpperCase(banco.semaforo().replace('_',' '))}">VERDE</span>
+            <span class="kpi-label">Semáforo del banco</span>
+        </div>
+    </section>
+
+    <p class="productos">Productos habilitados:
+        <span class="etiqueta" th:each="p : ${productos}" th:text="${p}">Producto</span>
+        <span th:if="${#lists.isEmpty(productos)}">ninguno</span>
+    </p>
+
+    <div th:replace="~{fragments :: leyenda}"></div>
+
+    <section class="panel">
+        <h2>Evolución diaria de transferencias</h2>
+        <canvas id="graficoEvolucion" height="90"></canvas>
+    </section>
+
+    <section class="panel">
+        <h2>Transferencias (clic en una fila para ver el detalle)</h2>
+        <form class="filtros" method="get" th:action="@{/tablero/banco/{id}(id=${banco.idBanco()})}">
+            <label>Desde <input type="date" name="desde" th:value="${desde}"></label>
+            <label>Hasta <input type="date" name="hasta" th:value="${hasta}"></label>
+            <label>Estado
+                <select name="estado">
+                    <option value="">Todos</option>
+                    <option th:each="e : ${estados}" th:value="${e}" th:text="${e}" th:selected="${e == estadoSel}"></option>
+                </select>
+            </label>
+            <label>País
+                <select name="pais">
+                    <option value="">Todos</option>
+                    <option th:each="p : ${paises}" th:value="${p.id()}" th:text="${p.descripcion()}" th:selected="${p.id() == paisSel}"></option>
+                </select>
+            </label>
+            <button type="submit">Filtrar</button>
+            <a th:href="@{/tablero/banco/{id}(id=${banco.idBanco()})}" class="link-limpiar">Limpiar</a>
+        </form>
+
+        <table class="tabla">
+            <thead><tr><th>#</th><th>Fecha</th><th>Producto</th><th>País</th><th class="num">Monto</th><th>Estado</th></tr></thead>
+            <tbody>
+            <tr th:each="t : ${transferencias}" class="fila-click"
+                th:data-href="@{/tablero/transferencia/{id}(id=${t.idTransferencia()},desde=${desde},hasta=${hasta})}">
+                <td><a th:href="@{/tablero/transferencia/{id}(id=${t.idTransferencia()},desde=${desde},hasta=${hasta})}" th:text="${t.idTransferencia()}">1</a></td>
+                <td th:text="${#temporals.format(t.fecha(), 'dd/MM/yyyy HH:mm')}">01/01/2026</td>
+                <td th:text="${t.producto()}">Producto</td>
+                <td th:text="${t.pais()}">País</td>
+                <td class="num" th:text="${t.moneda()} + ' ' + ${#numbers.formatDecimal(t.monto(),1,'POINT',2,'COMMA')}">ARS 0</td>
+                <td><span class="estado" th:classappend="${'estado-' + #strings.toLowerCase(t.estado())}" th:text="${t.estado()}">APROBADA</span></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(transferencias)}"><td colspan="6" class="vacio">No hay transferencias para los filtros elegidos.</td></tr>
+            </tbody>
+        </table>
+        <p class="nota">Se muestran como máximo las 200 transferencias más recientes.</p>
+    </section>
+</main>
+
+<script th:inline="javascript">
+    new Chart(document.getElementById('graficoEvolucion'), {
+        type: 'bar',
+        data: {
+            labels: /*[[${dias}]]*/ [],
+            datasets: [
+                { label: 'Aprobadas',  data: /*[[${aprobadasDia}]]*/ [],  backgroundColor: '#73bf69' },
+                { label: 'Rechazadas', data: /*[[${rechazadasDia}]]*/ [], backgroundColor: '#f2495c' }
+            ]
+        },
+        options: { scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } },
+                   plugins: { legend: { position: 'bottom' } } }
+    });
+    document.querySelectorAll('tr.fila-click').forEach(tr =>
+        tr.addEventListener('click', () => window.location = tr.dataset.href));
+</script>
+</body>
+</html>

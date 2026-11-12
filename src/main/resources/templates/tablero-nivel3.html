@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tablero — Detalle de transferencia</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: cabecera}"></div>
+
+<main class="contenido contenido-angosto">
+    <nav class="breadcrumb">
+        <a th:href="@{/tablero(desde=${desde},hasta=${hasta})}">Bancos</a> /
+        <a th:href="@{/tablero/banco/{id}(id=${t.idBanco()},desde=${desde},hasta=${hasta})}">&larr; <span th:text="${t.banco()}">Banco</span></a> (drill-up)
+        / <strong>Transferencia #<span th:text="${t.idTransferencia()}">1</span></strong> <span class="nota">(nivel 3 de 3)</span>
+    </nav>
+
+    <section class="panel">
+        <h2>Estado: <span class="estado" th:classappend="${'estado-' + #strings.toLowerCase(t.estado())}" th:text="${t.estado()}">APROBADA</span></h2>
+        <p th:if="${t.codigoRespuesta() != null}">
+            Código de respuesta <strong th:text="${t.codigoRespuesta()}">00</strong>:
+            <span th:text="${t.descripcionRespuesta() != null ? t.descripcionRespuesta() : 'Sin descripción en el catálogo'}">Operación aprobada</span>
+        </p>
+        <p th:if="${t.codigoRespuesta() == null}">Todavía no se recibió respuesta del banco.</p>
+    </section>
+
+    <section class="panel">
+        <h2>Datos de la transferencia</h2>
+        <dl class="datos">
+            <dt>Banco</dt><dd th:text="${t.banco()}">Banco</dd>
+            <dt>Producto</dt><dd th:text="${t.producto()}">Producto</dd>
+            <dt>País de origen</dt><dd><span th:text="${t.pais()}">País</span> <span class="nota" th:text="${t.paisLocal() ? '(local)' : '(cross-border)'}"></span></dd>
+            <dt>Monto</dt><dd th:text="${t.moneda()} + ' ' + ${#numbers.formatDecimal(t.monto(),1,'POINT',2,'COMMA')}">ARS 0</dd>
+            <dt>Fecha de creación</dt><dd th:text="${#temporals.format(t.fecha(), 'dd/MM/yyyy HH:mm:ss')}">01/01/2026</dd>
+        </dl>
+    </section>
+
+    <section class="panel">
+        <h2>Línea de tiempo</h2>
+        <ol class="timeline">
+            <li class="hecho">Recibida</li>
+            <li class="hecho">Enviada al banco</li>
+            <li th:class="${t.estado() == 'PENDIENTE'} ? 'pendiente' : 'hecho'">
+                <span th:text="${t.estado() == 'PENDIENTE'} ? 'Esperando respuesta' : 'Respondida'">Respondida</span></li>
+            <li th:unless="${t.estado() == 'PENDIENTE'}" th:class="'hecho final-' + ${#strings.toLowerCase(t.estado())}"
+                th:text="${#strings.capitalize(#strings.toLowerCase(t.estado()))}">Aprobada</li>
+        </ol>
+    </section>
+</main>
+</body>
+</html>

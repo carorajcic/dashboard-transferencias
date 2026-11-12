@@ -1,7 +1,7 @@
 -- DATOS INICIALES DE CARGA
 
 INSERT INTO usuarios (username, password_hash, nombre_completo) VALUES
-('admin', '$2b$10$SwiBYkHQHfFe9PfaaDGs2./UzLXEKIfi0k3W6jHqM5hvWFh0a06Ce', 'Administrador del Tablero');
+('admin', '$2a$10$furckSdOAYT/WPTY7PTsde3bz3pVvAueymcjIbyyUazU23pANaknO', 'Administrador del Tablero');
 
 -- Países
 INSERT INTO paises (nombre, codigo_iso, es_local) VALUES

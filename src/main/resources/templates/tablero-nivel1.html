@@ -1,17 +1,93 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Tablero — Bancos</title>
-    <link rel="stylesheet" href="/css/estilos.css">
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script th:src="@{/js/tema-graficos.js}"></script>
 </head>
 <body>
-    <div style="padding: 30px;">
-        <h1>Login ok</h1>
-        <p>Sesión iniciada como: <strong sec:authentication="name">usuario</strong></p>
-        <form th:action="@{/logout}" method="post">
-            <button type="submit">Cerrar sesión</button>
-        </form>
-    </div>
+<div th:replace="~{fragments :: cabecera}"></div>
+
+<main class="contenido">
+    <nav class="breadcrumb">Bancos <span class="nota">(nivel 1 de 3)</span></nav>
+
+    <form class="filtros" method="get" th:action="@{/tablero}">
+        <label>Desde <input type="date" name="desde" th:value="${desde}"></label>
+        <label>Hasta <input type="date" name="hasta" th:value="${hasta}"></label>
+        <button type="submit">Filtrar</button>
+        <a th:href="@{/tablero}" class="link-limpiar">Limpiar</a>
+    </form>
+
+    <section class="kpis">
+        <div class="kpi"><span class="kpi-valor" th:text="${#numbers.formatInteger(totales.total(),1,'POINT')}">0</span><span class="kpi-label">Transferencias</span></div>
+        <div class="kpi"><span class="kpi-valor"
+            th:classappend="${totales.tasaAprobacion() == null} ? 'txt-sin_datos' : (${totales.tasaAprobacion() >= umbralVerde} ? 'txt-verde' : (${totales.tasaAprobacion() >= umbralAmarillo} ? 'txt-amarillo' : 'txt-rojo'))"
+            th:text="${totales.tasaAprobacion() != null ?#numbers.formatDecimal(totales.tasaAprobacion(),1,1,'COMMA') + '%' : '—'}">0%</span><span class="kpi-label">Tasa de aprobación</span></div>
+        <div class="kpi"><span class="kpi-valor" th:text="'$ ' + ${#numbers.formatDecimal(totales.montoAprobado(),1,'POINT',0,'COMMA')}">$ 0</span><span class="kpi-label">Monto aprobado</span></div>
+        <div class="kpi"><span class="kpi-valor" th:text="${#numbers.formatInteger(totales.pendientes(),1,'POINT')}">0</span><span class="kpi-label">Pendientes</span></div>
+    </section>
+
+    <div th:replace="~{fragments :: leyenda}"></div>
+
+    <section class="fila-paneles">
+        <div class="panel">
+            <h2>Estado de las transferencias</h2>
+            <canvas id="graficoEstados" height="220"></canvas>
+        </div>
+        <div class="panel panel-ancho">
+            <h2>Bancos (clic en una fila para ver sus transferencias)</h2>
+            <table class="tabla">
+                <thead>
+                <tr><th>Banco</th><th class="num">Volumen</th><th class="num">Aprobadas</th><th class="num">Rechazadas</th>
+                    <th class="num">Monto aprobado</th><th class="num">Tasa aprob.</th><th>Semáforo</th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="b : ${bancos}" class="fila-click"
+                    th:data-href="@{/tablero/banco/{id}(id=${b.idBanco()},desde=${desde},hasta=${hasta})}">
+                    <td><a th:href="@{/tablero/banco/{id}(id=${b.idBanco()},desde=${desde},hasta=${hasta})}" th:text="${b.nombre()}">Banco</a></td>
+                    <td class="num" th:text="${b.total()}">0</td>
+                    <td class="num" th:text="${b.aprobadas()}">0</td>
+                    <td class="num" th:text="${b.rechazadas()}">0</td>
+                    <td class="num" th:text="'$ ' + ${#numbers.formatDecimal(b.montoAprobado(),1,'POINT',0,'COMMA')}">$ 0</td>
+                    <td class="num" th:text="${b.tasaAprobacion() != null ? #numbers.formatDecimal(b.tasaAprobacion(),1,1,'COMMA') + '%' : '—'}">0%</td>
+                    <td><i class="chip" th:classappend="${'chip-' + #strings.toLowerCase(b.semaforo())}"></i>
+                        <span th:classappend="${'txt-' + #strings.toLowerCase(b.semaforo())}" th:text="${#strings.capitalize(#strings.toLowerCase(b.semaforo().replace('_',' ')))}">Verde</span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>Volumen de transferencias por banco</h2>
+        <canvas id="graficoBancos" height="90"></canvas>
+    </section>
+</main>
+
+<script th:inline="javascript">
+    const t = /*[[${totales}]]*/ {};
+    new Chart(document.getElementById('graficoEstados'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Aprobadas', 'Rechazadas', 'Pendientes', 'Revertidas'],
+            datasets: [{ data: [t.aprobadas, t.rechazadas, t.pendientes, t.revertidas],
+                         backgroundColor: ['#73bf69', '#f2495c', '#8e9399', '#ff9830'] }]
+        },
+        options: { plugins: { legend: { position: 'bottom' } } }
+    });
+    new Chart(document.getElementById('graficoBancos'), {
+        type: 'bar',
+        data: {
+            labels: /*[[${nombresBancos}]]*/ [],
+            datasets: [{ label: 'Transferencias', data: /*[[${volumenBancos}]]*/ [], backgroundColor: '#5794f2' }]
+        },
+        options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+    });
+    document.querySelectorAll('tr.fila-click').forEach(tr =>
+        tr.addEventListener('click', () => window.location = tr.dataset.href));
+</script>
 </body>
 </html>

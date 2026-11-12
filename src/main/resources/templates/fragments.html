@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
+<body>
+
+<!-- Cabecera común a todos los niveles -->
+<header th:fragment="cabecera" class="cabecera">
+    <div class="cabecera-titulo">Dashboard de Transferencias <span>Transferencias</span></div>
+    <div class="cabecera-user">
+        <span>Sesión: <strong sec:authentication="name">usuario</strong></span>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn-salir">Cerrar sesión</button>
+        </form>
+    </div>
+</header>
+
+<!-- Referencia del semáforo (requisito: explicar qué representa cada estado) -->
+<div th:fragment="leyenda" class="leyenda">
+    <strong>Semáforo (tasa de aprobación):</strong>
+    <span><i class="chip chip-verde"></i> Verde: &ge; <b th:text="${#numbers.formatDecimal(umbralVerde,1,0)}">90</b>% (operación normal)</span>
+    <span><i class="chip chip-amarillo"></i> Amarillo: <b th:text="${#numbers.formatDecimal(umbralAmarillo,1,0)}">75</b>% a menos de <b th:text="${#numbers.formatDecimal(umbralVerde,1,0)}">90</b>% (advertencia)</span>
+    <span><i class="chip chip-rojo"></i> Rojo: menos de <b th:text="${#numbers.formatDecimal(umbralAmarillo,1,0)}">75</b>% (situación crítica)</span>
+    <span><i class="chip chip-sin_datos"></i> Gris: sin operaciones finalizadas</span>
+    <small>Tasa = aprobadas / operaciones finalizadas (se excluyen las pendientes).</small>
+</div>
+
+</body>
+</html>

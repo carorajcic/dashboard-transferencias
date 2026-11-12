@@ -10,9 +10,4 @@ public class LoginController {
     public String login() {
         return "login";
     }
-
-    @GetMapping("/tablero")
-    public String tablero() {
-        return "tablero-nivel1";
-    }
 }
